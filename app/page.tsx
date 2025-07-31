@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { Image, Skeleton } from "@heroui/react";
 import { FcAddImage } from "react-icons/fc";
 import { useEffect, useRef, useState } from "react";
 
 import { title, subtitle } from "@/components/primitives";
 import PredictCard from "@/components/card";
 import usePredictService from "@/service/predict_service";
+import GradPredictCard from "@/components/grad-card";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -15,6 +15,7 @@ export default function Home() {
   const {
     prediction,
     loading,
+    gradcamLoading,
     gradcamImage,
     handleFileChange,
     handleUpload,
@@ -33,10 +34,14 @@ export default function Home() {
     handleFileChange(event);
   };
 
+  const handleUploadPredictAndGradcam = async () => {
+    await handleUpload(file);
+    await handleUploadGradcam(file);
+  };
+
   useEffect(() => {
     if (file) {
-      handleUpload(file);
-      handleUploadGradcam(file);
+      handleUploadPredictAndGradcam();
     }
   }, [file]);
 
@@ -75,46 +80,14 @@ export default function Home() {
         type="file"
         onChange={handleFileInputChange}
       />
-      {loading ? (
-        <Skeleton className="rounded-lg" isLoaded={loading}>
-          <Image
-            alt="Woman listing to music"
-            className="object-cover"
-            src={
-              gradcamImage
-                ? `data:image/png;base64,${gradcamImage}`
-                : "grad.png"
-            }
-            style={{ width: "1500px", height: "450px" }}
-          />
-        </Skeleton>
-      ) : (
-        <>
-          <div className="inline-block max-w-2xl text-center justify-center">
-            <span className={title()}>AI-powered&nbsp;</span>
-            <span className={title({ color: "violet" })}>Pneumonia&nbsp;</span>
-            <br />
-            <span className={title()}>Detection with GradCAM.</span>
-          </div>
-          <Image
-            alt="Woman listing to music"
-            className="object-cover"
-            src={
-              gradcamImage
-                ? `data:image/png;base64,${gradcamImage}`
-                : "grad.png"
-            }
-            style={{ width: "1500px", height: "450px" }}
-          />
-        </>
-      )}
-      {/* <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
-      </div> */}
+
+      <div className="inline-block max-w-2xl text-center justify-center">
+        <span className={title()}>AI-powered&nbsp;</span>
+        <span className={title({ color: "violet" })}>Pneumonia&nbsp;</span>
+        <br />
+        <span className={title()}>Detection with GradCAM.</span>
+      </div>
+      <GradPredictCard loading={gradcamLoading} prediction={gradcamImage} />
     </section>
   );
 }

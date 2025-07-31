@@ -58,7 +58,6 @@ const usePredictService = (
     formData.append("file", file!);
 
     setLoading(true);
-    setGradcamImage(null); // reset nếu trước đó đã dùng GradCAM
 
     try {
       const response = await postformDataAxios<PredictObjectResponse>(
@@ -84,7 +83,7 @@ const usePredictService = (
 
     formData.append("file", file!);
 
-    setGradcamLoading(true);
+    setGradcamLoading((prev) => !prev);
 
     try {
       const response = await postformDataAxios<PredictGradcamObjectResponse>(
@@ -102,7 +101,7 @@ const usePredictService = (
     } catch (error) {
       setPrediction(`Dự đoán + GradCAM thất bại: ${error}`);
     } finally {
-      setGradcamLoading(false);
+      setGradcamLoading((prev) => !prev);
     }
   };
 

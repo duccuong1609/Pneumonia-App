@@ -23,45 +23,28 @@ const PredictCard: React.FC<PredictCardProps> = ({
   const [textPrediction, setTextPrediction] = useState<string | null>(null);
 
   useEffect(() => {
+    if (loading) return setTextPrediction(null);
     if (prediction) {
       setTextPrediction(`${prediction}`);
     } else {
       setTextPrediction(null);
     }
-  }, [prediction]);
+  }, [prediction, loading]);
 
   return (
     <Card isFooterBlurred className="border-none" radius="lg">
-      {loading ? (
-        <Skeleton className="rounded-lg" isLoaded={loading}>
-          <Image
-            alt="Woman listing to music"
-            className="object-cover blur-3xl"
-            src={imageUrl}
-            style={{ width: "500px", height: "500px" }}
-          />
-        </Skeleton>
-      ) : (
+      <Skeleton className="rounded-lg" isLoaded={!loading}>
         <Image
           alt="Woman listing to music"
-          className="object-cover"
+          className={`object-cover ${loading ? "blur-3xl" : ""}`}
           src={imageUrl}
           style={{ width: "500px", height: "500px" }}
         />
-      )}
+      </Skeleton>
       <CardFooter className="justify-between before:bg-white/10 border-white/20 border-1 overflow-hidden py-2 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-2xl ml-1 z-10 backdrop-blur-lg">
         <p className="text-lg text-cyan-800 font-bold">
           {prediction ? textPrediction : "Loading..."}
         </p>
-        {/* <Button
-                    className="text-tiny text-white bg-black/20"
-                    color="default"
-                    radius="lg"
-                    size="sm"
-                    variant="flat"
-                >
-                    Notify me
-                </Button> */}
         <LikeDropdown />
       </CardFooter>
     </Card>
